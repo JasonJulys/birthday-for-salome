@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Birthday Gift</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial Rounded MT Bold', 'Arial', sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #333;
+            overflow-x: hidden;
+        }
+        
+        .page {
+            width: 100%;
+            max-width: 800px;
+            padding: 30px;
+            text-align: center;
+            display: none;
+            background-color: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            margin: 20px;
+        }
+        
+        .active {
+            display: block;
+            animation: fadeIn 0.8s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* 第一页样式 */
+        .gift-box {
+            width: 200px;
+            height: 200px;
+            margin: 30px auto;
+            position: relative;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+        
+        .gift-box:hover {
+            transform: scale(1.05);
+        }
+        
+        .box {
+            width: 180px;
+            height: 120px;
+            background: linear-gradient(45deg, #ff6b6b, #ff8e8e);
+            position: absolute;
+            bottom: 0;
+            left: 10px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(255, 107, 107, 0.4);
+        }
+        
+        .lid {
+            width: 200px;
+            height: 60px;
+            background: linear-gradient(45deg, #ff5252, #ff7b7b);
+            position: absolute;
+            top: 0;
+            left: 0;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(255, 82, 82, 0.4);
+            transform-origin: bottom;
+            transition: transform 0.5s;
+        }
+        
+        .ribbon {
+            width: 40px;
+            height: 200px;
+            background: linear-gradient(to bottom, #4ecdc4, #44a08d);
+            position: absolute;
+            left: 80px;
+            z-index: 1;
+            border-radius: 5px;
+        }
+        
+        .bow {
+            width: 60px;
+            height: 40px;
+            background: #4ecdc4;
+            position: absolute;
+            top: 80px;
+            left: 70px;
+            border-radius: 50%;
+            z-index: 2;
+        }
+        
+        .bow::before, .bow::after {
+            content: '';
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            background: #4ecdc4;
+            border-radius: 50%;
+        }
+        
+        .bow::before {
+            top: -25px;
+            left: 5px;
+        }
+        
+        .bow::after {
+            top: -25px;
+            right: 5px;
+        }
+        
+        .open-btn {
+            margin-top: 40px;
+            padding: 12px 40px;
+            background: linear-gradient(45deg, #ff6b6b, #ff5252);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            font-size: 18px;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 5px 15px rgba(255, 107, 107, 0.4);
+        }
+        
+        .open-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(255, 107, 107, 0.6);
+        }
+        
+        h1 {
+            color: #ff6b6b;
+            margin-bottom: 20px;
+            font-size: 2.5rem;
+        }
+        
+        /* 第二页样式 */
+        .password-container {
+            margin: 40px 0;
+        }
+        
+        .password-input {
+            width: 300px;
+            padding: 15px;
+            font-size: 18px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            margin: 20px 0;
+            transition: border-color 0.3s;
+        }
+        
+        .password-input:focus {
+            border-color: #4ecdc4;
+            outline: none;
+        }
+        
+        .hint {
+            color: #888;
+            font-size: 14px;
+            margin-top: 10px;
+        }
+        
+        .submit-btn {
+            padding: 12px 40px;
+            background: linear-gradient(45deg, #4ecdc4, #44a08d);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            font-size: 18px;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 5px 15px rgba(78, 205, 196, 0.4);
+        }
+        
+        .submit-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(78, 205, 196, 0.6);
+        }
+        
+        .error-message {
+            color: #ff6b6b;
+            margin-top: 15px;
+            display: none;
+        }
+        
+        /* 第三页样式 */
+        .photo-container {
+            width: 300px;
+            height: 300px;
+            margin: 30px auto;
+            border-radius: 50%;
+            overflow: hidden;
+            border: 8px solid #ff6b6b;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        }
+        
+        .photo-placeholder {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-size: 18px;
+        }
+        
+        .message {
+            background: #f9f9f9;
+            padding: 25px;
+            border-radius: 15px;
+            margin: 30px 0;
+            line-height: 1.6;
+            text-align: left;
+            border-left: 5px solid #4ecdc4;
+        }
+        
+        .video-container {
+            margin: 30px 0;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+        
+        .video-placeholder {
+            width: 100%;
+            height: 300px;
+            background: linear-gradient(45deg, #4ecdc4, #44a08d);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-size: 18px;
+        }
+        
+        .heart {
+            color: #ff6b6b;
+            font-size: 24px;
+            margin: 10px;
+            animation: pulse 1.5s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 600px) {
+            .page {
+                padding: 20px;
+                margin: 10px;
+            }
+            
+            h1 {
+                font-size: 1.8rem;
+            }
+            
+            .gift-box {
+                width: 150px;
+                height: 150px;
+            }
+            
+            .box {
+                width: 130px;
+                height: 90px;
+                left: 10px;
+            }
+            
+            .lid {
+                width: 150px;
+                height: 45px;
+            }
+            
+            .ribbon {
+                width: 30px;
+                height: 150px;
+                left: 60px;
+            }
+            
+            .bow {
+                width: 45px;
+                height: 30px;
+                left: 52px;
+                top: 60px;
+            }
+            
+            .photo-container {
+                width: 200px;
+                height: 200px;
+            }
+            
+            .password-input {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 第一页：礼物盒子 -->
+    <div id="page1" class="page active">
+        <h1>There's a Gift for you</h1>
+        <div class="gift-box" id="giftBox">
+            <div class="box"></div>
+            <div class="lid"></div>
+            <div class="ribbon"></div>
+            <div class="bow"></div>
+        </div>
+        <button class="open-btn" id="openBtn">打开</button>
+    </div>
+    
+    <!-- 第二页：密码输入 -->
+    <div id="page2" class="page">
+        <h1>Password Needed</h1>
+        <p>Please input the name of your favorate guy in HK</p>
+        <div class="password-container">
+            <input type="text" class="password-input" id="passwordInput" placeholder="Please input passowrd">
+            <p class="hint">Hint：start with a "J"</p>
+            <button class="submit-btn" id="submitBtn">Submit</button>
+            <p class="error-message" id="errorMsg">Humm, you really don't know?</p>
+        </div>
+    </div>
+    
+    <!-- 第三页：祝福页面 -->
+    <div id="page3" class="page">
+        <h1>Happy Birthday！</h1>
+        <div class="photo-container">
+            <div class="photo-placeholder">
+                她的照片将在这里显示
+            </div>
+        </div>
+        <div class="message">
+            <p>亲爱的 [她的名字]，</p>
+            <p>在这个特别的日子里，我想告诉你，你是我生命中最美好的礼物。你的笑容点亮了我的世界，你的善良温暖了我的心房。</p>
+            <p>愿你的生日充满欢乐和惊喜，愿你的每一天都像今天一样特别。希望这个小小的惊喜能给你带来一丝快乐。</p>
+            <p>永远爱你的人 <span class="heart">❤</span></p>
+        </div>
+        <div class="video-container">
+            <div class="video-placeholder">
+                我为你录制的视频将在这里播放
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 页面切换
+        document.getElementById('openBtn').addEventListener('click', function() {
+            document.getElementById('page1').classList.remove('active');
+            document.getElementById('page2').classList.add('active');
+            
+            // 添加礼物打开动画
+            const lid = document.querySelector('.lid');
+            lid.style.transform = 'rotate(-110deg) translateY(-20px)';
+        });
+        
+        // 密码验证
+        document.getElementById('submitBtn').addEventListener('click', function() {
+            const password = document.getElementById('passwordInput').value.trim();
+            const errorMsg = document.getElementById('errorMsg');
+            
+            // 这里假设密码是你的名字，例如 "John"
+            if (password === "Jason") {
+                document.getElementById('page2').classList.remove('active');
+                document.getElementById('page3').classList.add('active');
+            } else {
+                errorMsg.style.display = 'block';
+            }
+        });
+        
+        // 按Enter键也可以提交密码
+        document.getElementById('passwordInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                document.getElementById('submitBtn').click();
+            }
+        });
+        
+        // 点击礼物盒子也可以打开
+        document.getElementById('giftBox').addEventListener('click', function() {
+            document.getElementById('openBtn').click();
+        });
+    </script>
+</body>
+</html>
